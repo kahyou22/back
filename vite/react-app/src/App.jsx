@@ -11,13 +11,21 @@ function Header({ title }) {
   );
 }
 
-function Nav({ topics }) {
+function Nav({ topics, handleChange }) {
   return (
     <nav>
       <ol>
         {topics.map((topic) => (
           <li key={topic.id}>
-            <a href={`/read/${topic.id}`}>{topic.title}</a>
+            <a
+              href={`/read/${topic.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleChange(topic.id);
+              }}
+            >
+              {topic.title}
+            </a>
           </li>
         ))}
       </ol>
@@ -35,26 +43,29 @@ function Article({ title, body }) {
 }
 
 function App() {
-  const [aaa, setAAA] = useState(false);
   const topics = [
     { id: 1, title: "html", body: "html is ..." },
     { id: 2, title: "css", body: "css is ..." },
     { id: 3, title: "javascript", body: "javascript is ..." },
   ];
+  const [pageId, setPageId] = useState(topics[0].id);
+
+  function handleChange(id) {
+    setPageId(id);
+  }
+
   return (
     <div>
       <Header title="WEB" />
-      <Nav topics={topics} />
-      {aaa ? <p>a</p> : <p>b</p>}
-      <button
-        onClick={() => {
-          setAAA(!aaa);
-          console.log(aaa);
-        }}
-      >
-        a
-      </button>
-      <Article title="Welcome" body="Hello, Web" />
+      <Nav topics={topics} handleChange={handleChange} />
+      {topics.map((topic) => {
+        if (pageId != topic.id) return;
+        return <Article title={topic.title} body={topic.body} />;
+      })}
+      {/* <Article
+        title={topics[pageId - 1].title}
+        body={topics[pageId - 1].body}
+      /> */}
     </div>
   );
 }
